@@ -109,7 +109,7 @@ def pay_usdc() -> str:
     if not USDC_KEY:
         fail("payment_method is 'usdc' but usdc_private_key is not set.")
 
-    probe = httpx.post(f"{REFEREE_URL}/audit", json={"jobSpec": "probe", "deliverable": "probe"}, timeout=15)
+    probe = httpx.post(f"{REFEREE_URL}/audit", json={"task": "probe", "work": "probe"}, timeout=15)
     if probe.status_code != 402:
         fail(f"Expected 402 from /audit probe, got {probe.status_code}.")
 
