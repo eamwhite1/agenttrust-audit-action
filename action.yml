@@ -1,0 +1,76 @@
+name: 'AgentTrust AI Audit'
+description: 'Gate a pull request with an independent AI audit. Fails the pipeline if the diff scores below your threshold.'
+author: 'AgentTrust'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  job_spec:
+    description: 'Plain-English quality rubric — what counts as a passing PR for this repo.'
+    required: true
+
+  threshold:
+    description: 'Minimum score (0–100) to pass. Defaults to 70.'
+    required: false
+    default: '70'
+
+  payment_method:
+    description: 'xrp or usdc'
+    required: false
+    default: 'xrp'
+
+  xrp_secret:
+    description: 'XRPL wallet secret (sXXX…) that pays the 0.1 XRP audit fee. Required when payment_method is xrp.'
+    required: false
+    default: ''
+
+  usdc_private_key:
+    description: 'EVM private key (0x…) for the Base wallet that pays the $0.10 USDC audit fee. Required when payment_method is usdc.'
+    required: false
+    default: ''
+
+  max_diff_chars:
+    description: 'Truncate the diff at this many characters before sending. Defaults to 12000.'
+    required: false
+    default: '12000'
+
+  referee_url:
+    description: 'AgentTrust Referee base URL. Override only if self-hosting.'
+    required: false
+    default: 'https://xrpl-referee.onrender.com'
+
+outputs:
+  verdict:
+    description: 'PASS or FAIL'
+  score:
+    description: 'Numeric score 0–100'
+  summary:
+    description: 'One-paragraph plain-English explanation from the AI referee'
+  payment_hash:
+    description: 'Transaction hash of the audit fee payment'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install dependencies
+      shell: bash
+      run: pip install httpx xrpl-py --quiet
+
+    - name: Run AgentTrust audit
+      shell: bash
+      env:
+        AT_JOB_SPEC:        ${{ inputs.job_spec }}
+        AT_THRESHOLD:       ${{ inputs.threshold }}
+        AT_PAYMENT_METHOD:  ${{ inputs.payment_method }}
+        AT_XRP_SECRET:      ${{ inputs.xrp_secret }}
+        AT_USDC_KEY:        ${{ inputs.usdc_private_key }}
+        AT_MAX_DIFF_CHARS:  ${{ inputs.max_diff_chars }}
+        AT_REFEREE_URL:     ${{ inputs.referee_url }}
+        GITHUB_TOKEN:       ${{ github.token }}
+        GITHUB_REPOSITORY:  ${{ github.repository }}
+        GITHUB_SHA:         ${{ github.sha }}
+        GITHUB_BASE_REF:    ${{ github.base_ref }}
+        GITHUB_HEAD_REF:    ${{ github.head_ref }}
+      run: python ${{ github.action_path }}/audit.py
