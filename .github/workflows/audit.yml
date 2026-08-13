@@ -1,0 +1,23 @@
+name: AI Code Audit
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: eamwhite1/agenttrust-audit-action@v1
+        with:
+          job_spec: |
+            Review this pull request for correctness, security, and code quality.
+            Pass if: no obvious bugs, no hardcoded secrets, no SQL injection risk,
+            functions are well-named, logic is clear.
+          threshold: 70
+          payment_method: xrp
+          xrp_secret: ${{ secrets.AGENTTRUST_XRP_SECRET }}
