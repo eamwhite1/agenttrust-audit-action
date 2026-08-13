@@ -162,7 +162,7 @@ def run_audit(diff: str, payment_hash: str) -> dict:
     resp = httpx.post(
         f"{REFEREE_URL}/audit",
         headers={"x-payment-hash": payment_hash},
-        json={"jobSpec": JOB_SPEC, "deliverable": diff},
+                json={"task": JOB_SPEC, "work": diff},
         timeout=120,
     )
     if resp.status_code != 200:
