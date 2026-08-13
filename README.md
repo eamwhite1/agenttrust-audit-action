@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0        # needed to diff against base branch
 
-      - uses: eamwhite1/agenttrust-audit-action@v1
+      - uses: eamwhite1/agenttrust-audit-action@main
         with:
           job_spec: |
             Review this pull request for correctness, security, and code quality.
@@ -79,7 +79,7 @@ Keep at least 1 XRP in the wallet as reserve. Each audit costs 0.1 XRP.
 ## Using the audit result in later steps
 
 ```yaml
-- uses: eamwhite1/agenttrust-audit-action@v1
+- uses: eamwhite1/agenttrust-audit-action@main
   id: audit
   with:
     job_spec: 'Review for correctness and security.'
@@ -123,8 +123,7 @@ Is this good code?
 
 ## Resources
 
+- [Full setup guide](https://www.cryptovault.co.uk/github-action/)
 - [API docs](https://xrpl-referee.onrender.com/docs)
 - [AgentTrust](https://www.cryptovault.co.uk)
 - [Smithery listing](https://smithery.ai/servers/xrpl/agent-trust)
-
--
